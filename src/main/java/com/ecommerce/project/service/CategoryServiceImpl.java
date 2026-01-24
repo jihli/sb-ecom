@@ -41,9 +41,10 @@ public class CategoryServiceImpl implements CategoryService {
     public Category updateCategory(Category category, Long categoryId) {
         Category savedCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
-
+        // 下面直接用categoryId赋给了接收了的category
         category.setCategoryId(categoryId);
-        savedCategory = categoryRepository.save(category);
+        // 因为categoryId在数据库中存在 所以我们知道是update命令 最后这里的save就是把接收的category对象的内容 把数据库的一整条都更新了
+        savedCategory = categoryRepository.save(category);// saved savedCategory into database
         return savedCategory;
     }
 
