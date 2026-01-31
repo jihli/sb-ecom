@@ -13,15 +13,16 @@ import java.util.List;
 @Service
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
-//    List<Category> categories = new ArrayList<>();
-//    private Long nextId = 1L;
-
     @Autowired
     private CategoryRepository categoryRepository;
 
     @Override
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
+        if (categories.isEmpty()) {
+            throw new APIException("No category created till now");
+        }
+        return categories;
     }
 
     @Override
@@ -31,7 +32,6 @@ public class CategoryServiceImpl implements CategoryService {
             throw new APIException("Category with the name "
                     + category.getCategoryName() + " already exists !!!");
         }
-//        category.setCategoryId(nextId++);
         categoryRepository.save(category);
     }
 
@@ -39,7 +39,6 @@ public class CategoryServiceImpl implements CategoryService {
     public String deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-
         categoryRepository.delete(category);
         return "Category with categoryId: " + category.getCategoryId() + " deleted successfully";
     }
