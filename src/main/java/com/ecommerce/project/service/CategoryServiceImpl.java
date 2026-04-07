@@ -51,21 +51,25 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public String deleteCategory(Long categoryId) {
+    public CategoryDTO deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
         categoryRepository.delete(category);
-        return "Category with categoryId: " + category.getCategoryId() + " deleted successfully";
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
     @Override
-    public Category updateCategory(Category category, Long categoryId) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryId) {
         Category savedCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+
+        Category category = modelMapper.map(categoryDTO, Category.class);
         // 下面直接用categoryId赋给了接收了的category
         category.setCategoryId(categoryId);
-        // 因为categoryId在数据库中存在 所以我们知道是update命令 最后这里的save就是把接收的category对象的内容 把数据库的一整条都更新了
-        savedCategory = categoryRepository.save(category);// saved savedCategory into database
-        return savedCategory;
+
+        // 因为categoryId在数据库中存在 所以我们知道是update命令
+        // 最后这里的save就是把接收的category对象的内容 把数据库的一整条都更新了
+        savedCategory = categoryRepository.save(category);
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 }
